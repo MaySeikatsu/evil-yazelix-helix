@@ -1,4 +1,5 @@
 pub mod default;
+pub mod default_evil;
 pub mod macros;
 
 pub use crate::commands::MappableCommand;
@@ -18,6 +19,8 @@ use std::{
     ops::{Deref, DerefMut},
     sync::Arc,
 };
+
+pub use default_evil::default_evil;
 
 #[derive(Debug, Clone, Default, Deserialize)]
 pub struct KeyTrieNode {

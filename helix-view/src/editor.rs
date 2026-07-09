@@ -294,6 +294,8 @@ where
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case", default, deny_unknown_fields)]
 pub struct Config {
+    /// Vim keybindings and behavior. Defaults to true.
+    pub evil: bool,
     /// Padding to keep between the edge of the screen and the cursor when scrolling. Defaults to 5.
     pub scrolloff: usize,
     /// Number of lines to scroll at once. Defaults to 3
@@ -492,6 +494,15 @@ impl Default for SmartTabConfig {
     }
 }
 
+impl SmartTabConfig {
+    pub fn default_evil() -> Self {
+        SmartTabConfig {
+            enable: false,
+            supersede_menu: false,
+        }
+    }
+}
+
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default, rename_all = "kebab-case", deny_unknown_fields)]
 pub struct TerminalConfig {
@@ -640,6 +651,33 @@ impl Default for StatusLineConfig {
     }
 }
 
+impl StatusLineConfig {
+    pub fn default_evil() -> Self {
+        use StatusLineElement as E;
+
+        Self {
+            left: vec![E::Mode, E::Spacer, E::VersionControl, E::Spacer, E::Spinner],
+            center: vec![
+                E::FileName,
+                E::ReadOnlyIndicator,
+                E::FileModificationIndicator,
+            ],
+            right: vec![
+                E::Diagnostics,
+                E::Selections,
+                E::Register,
+                E::Position,
+                E::FileEncoding,
+                E::FileType,
+            ],
+            separator: String::from("│"),
+            mode: ModeConfig::default_evil(),
+            diagnostics: vec![Severity::Warning, Severity::Error],
+            workspace_diagnostics: vec![Severity::Warning, Severity::Error],
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case", default, deny_unknown_fields)]
 pub struct ModeConfig {
@@ -654,6 +692,16 @@ impl Default for ModeConfig {
             normal: String::from("NOR"),
             insert: String::from("INS"),
             select: String::from("SEL"),
+        }
+    }
+}
+
+impl ModeConfig {
+    pub fn default_evil() -> Self {
+        Self {
+            normal: String::from("NOR"),
+            insert: String::from("INS"),
+            select: String::from("VIS"),
         }
     }
 }
@@ -1016,11 +1064,20 @@ impl Default for WhitespaceCharacters {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum RainbowIndentOptions {
+    None,
+    Dim,
+    Normal,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default, rename_all = "kebab-case")]
 pub struct IndentGuidesConfig {
     pub render: bool,
     pub character: char,
     pub skip_levels: u8,
+    pub rainbow_option: RainbowIndentOptions,
 }
 
 impl Default for IndentGuidesConfig {
@@ -1029,6 +1086,7 @@ impl Default for IndentGuidesConfig {
             skip_levels: 0,
             render: false,
             character: '│',
+            rainbow_option: RainbowIndentOptions::None,
         }
     }
 }
@@ -1101,6 +1159,7 @@ impl Default for WordCompletion {
 impl Default for Config {
     fn default() -> Self {
         Self {
+            evil: false,
             scrolloff: 5,
             scroll_lines: 3,
             mouse: true,
@@ -1174,6 +1233,18 @@ impl Default for Config {
     }
 }
 
+impl Config {
+    pub fn default_evil() -> Self {
+        let mut config = Config::default();
+        config.evil = true;
+        config.statusline = StatusLineConfig::default_evil();
+        config.color_modes = true;
+        config.insert_final_newline = false;
+        config.smart_tab = Some(SmartTabConfig::default_evil());
+        return config;
+    }
+}
+
 impl Default for SearchConfig {
     fn default() -> Self {
         Self {
@@ -1200,7 +1271,25 @@ use futures_util::stream::{Flatten, Once};
 
 type Diagnostics = BTreeMap<Uri, Vec<(lsp::Diagnostic, DiagnosticProvider)>>;
 
+#[derive(Copy, Clone)]
+pub enum EvilSelectMode {
+    CharacterWise,
+    LineWise,
+    //BlockWise,
+}
+
+impl std::fmt::Display for EvilSelectMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::CharacterWise => f.write_str(""),
+            Self::LineWise => f.write_str("LINE"),
+        }
+    }
+}
+
 pub struct Editor {
+    pub evil_select_mode: EvilSelectMode,
+
     /// Current editing mode.
     pub mode: Mode,
     pub tree: Tree,
@@ -1365,6 +1454,7 @@ impl Editor {
         area.height -= 1;
 
         Self {
+            evil_select_mode: EvilSelectMode::CharacterWise,
             mode: Mode::Normal,
             tree: Tree::new(area),
             next_document_id: DocumentId::default(),

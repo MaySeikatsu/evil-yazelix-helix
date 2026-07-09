@@ -1,0 +1,50 @@
+name: "evil-helix - check pr"
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions: write-all
+
+env:
+  RUST_BACKTRACE: 1
+  HELIX_LOG_LEVEL: info
+  HELIX_DEFAULT_RUNTIME: /opt/helix/runtime
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  build:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - id: x86_64-unknown-linux-gnu
+            name: amd64-linux
+            native: true
+            os: ubuntu-latest
+
+    runs-on: ${{ matrix.target.os }}
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install stable toolchain
+        uses: dtolnay/rust-toolchain@1.74
+        with:
+          targets: ${{ matrix.target.id }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "build"
+
+      - name: Check
+        run: cargo check
+
+      - name: Test
+        run: cargo test
