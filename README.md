@@ -1,24 +1,40 @@
-# Yazelix Helix Fork
+# evil-yazelix-helix
 
-Yazelix Helix is an active Yazelix fork of Helix's Steel-enabled editor line.
-It is usable as a standalone editor without the full Yazelix workspace.
+A merge of two independent Helix forks: [usagi-flow/evil-helix](https://github.com/usagi-flow/evil-helix)'s
+Vim keybinding emulation and [luccahuguet/yazelix-helix](https://github.com/luccahuguet/yazelix-helix)'s
+Steel plugin engine and Yazelix bridge integration, combined via a real
+two-parent `git merge` (not a squash or a hand-copy) so both projects'
+full commit history and authorship are preserved.
 
 | Field | Value |
 | --- | --- |
-| Upstream project | Helix, with Yazelix tracking the active Helix Steel line |
-| Fork category | Active fork |
-| Why this fork exists | Yazelix needs a Steel-enabled Helix package with a config-directory override and editor action bridge hooks while keeping `~/.config/helix` untouched |
-| Current Yazelix delta | `--config-dir`, reusable Steel plugin defaults, and Yazelix bridge hooks behind explicit runtime flags |
-| Non-goals | This fork does not own Yazelix workspace orchestration, generated Zellij/Yazi configs, or main-repo release policy |
-| Standalone support | Supported: users can run this fork directly as a Helix editor; Yazelix-only bridge behavior stays behind explicit runtime/session flags |
-| Upstream sync cadence | Monthly or before Helix-sensitive Yazelix releases |
-| Upstreaming/removal gate | Upstream reusable pieces when accepted, but keep the fork while its standalone Steel/defaults value is higher than upstream Helix plus main-repo adapters |
+| Upstream projects | [usagi-flow/evil-helix](https://github.com/usagi-flow/evil-helix) and [luccahuguet/yazelix-helix](https://github.com/luccahuguet/yazelix-helix), both forks of [helix-editor/helix](https://github.com/helix-editor/helix) (MPL 2.0) |
+| Shared ancestor | `helix-editor/helix` commit `5cda70e8` (2025-07-15, release 25.07) — both forks diverged from this point |
+| Fork category | Experimental |
+| Why this merge exists | evil-helix's vim keybindings can't plug into Yazelix's `helix.external` (which requires the `--config-dir` flag and bridge IPC only present in the yazelix-helix fork); this merge adds that support to a vim-keybinding-capable Helix |
+| Current delta over both bases | Deduplicated two independently-added, semantically-identical rainbow theme implementations (`Theme::rainbow_length`, `default_rainbow`) that git auto-merged as textually non-conflicting but Rust-duplicate; fixed a `cfg!()`-vs-`#[cfg]` compile error in `clipboard.rs`'s `Termcode` handling; added `Clone` to `IndentationConfiguration` |
+| Non-goals | Does not track Yazelix's own runtime/workspace orchestration (Zellij, Yazi) — only the Helix editor binary |
+| Standalone support | Supported: builds and runs as a normal `hx` binary; confirmed via `cargo check --workspace` and a runtime smoke test (version banner, `--config-dir`, `editor.evil` config parsing, clipboard detection, rainbow health-check column) |
+| Upstream sync cadence | Not yet established — this is a first proof-of-concept merge |
+| Upstreaming/removal gate | Superseded if evil-helix's maintainer accepts a `--config-dir`/bridge PR upstream, or if Yazelix adds a generic vim-mode-aware bridge |
 
+Merge conflicts were resolved in: `README.md`, `book/src/editor.md`,
+`helix-core/src/syntax/config.rs`, `helix-term/src/commands.rs`,
+`helix-term/src/config.rs`, `helix-term/src/keymap.rs`,
+`helix-term/src/ui/statusline.rs`, `helix-view/src/document.rs`,
+`helix-view/src/theme.rs` — all were additive features from both sides
+(vim commands/keymaps, modeline support, rainbow indent guides, Steel
+engine hooks, root-marker globs) with no true semantic collision.
+
+## Upstream Yazelix Helix Fork README
+
+Yazelix Helix is an active Yazelix fork of Helix's Steel-enabled editor line.
+It is usable as a standalone editor without the full Yazelix workspace.
 Fork notes and the packaged Steel defaults contract live in
 [YAZELIX.md](./YAZELIX.md). Main Yazelix fork policy lives in
 [Fork and child-repo maintenance](https://github.com/luccahuguet/yazelix/blob/main/docs/contracts/fork_child_repo_maintenance.md).
 
-## Upstream Helix README
+## Upstream evil-helix / Helix README
 
 <div align="center">
 
