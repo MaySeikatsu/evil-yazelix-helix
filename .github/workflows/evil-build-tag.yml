@@ -120,7 +120,7 @@ jobs:
         if: ${{ matrix.target.id == 'x86_64-pc-windows-msvc' }}
 
       - name: "Upload artifacts"
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "evil-helix-${{ matrix.target.name }}"
           path: "dist/evil-helix-${{ matrix.target.name }}.*"
