@@ -71,7 +71,7 @@ jobs:
           targets: ${{ matrix.target.id }}
 
       - name: Install binstall
-        uses: "cargo-bins/cargo-binstall@v1.6.5"
+        uses: "cargo-bins/cargo-binstall@v1.20.1"
         if: ${{ !matrix.target.native }}
 
       - name: "Install cross"
