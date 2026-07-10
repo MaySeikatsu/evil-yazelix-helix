@@ -521,7 +521,7 @@ pub struct ModelineIndentationConfiguration {
     pub unit: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub struct IndentationConfiguration {
     #[serde(deserialize_with = "deserialize_tab_width")]

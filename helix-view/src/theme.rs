@@ -559,17 +559,6 @@ impl Theme {
     }
 }
 
-fn default_rainbow() -> Vec<Style> {
-    vec![
-        Style::default().fg(Color::Red),
-        Style::default().fg(Color::Yellow),
-        Style::default().fg(Color::Green),
-        Style::default().fg(Color::Blue),
-        Style::default().fg(Color::Cyan),
-        Style::default().fg(Color::Magenta),
-    ]
-}
-
 pub struct ThemePalette {
     palette: HashMap<String, Color>,
 }
