@@ -135,35 +135,35 @@ jobs:
       - name: "Prepare"
         run: mkdir -p dist
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-amd64-linux"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-amd64-linux-musl"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-aarch64-linux"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-aarch64-linux-musl"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-armv6-linux-musl"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-amd64-macos"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-aarch64-macos"
           path: "dist/"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: "evil-helix-amd64-windows"
           path: "dist/"
