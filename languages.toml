@@ -2,7 +2,9 @@
 # See the languages documentation: https://docs.helix-editor.com/master/languages.html
 
 # TODO: evil-helix currently can't fetch 07035a24 for hare
-use-grammars = { except = [ "wren", "gemini", "hare" ] }
+# cylc: its repo (elliotfontaine/tree-sitter-cylc) no longer fetches anonymously, so the grammar build
+# fails and takes the whole helix (and yazelix's bundled copy) down with it.
+use-grammars = { except = [ "wren", "gemini", "hare", "cylc" ] }
 
 [language-server]
 
